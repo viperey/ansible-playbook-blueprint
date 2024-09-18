@@ -1,0 +1,14 @@
+---
+
+- name: "Create {{ path_fonts }} directory"
+  ansible.builtin.file:
+    path: "{{ path_fonts }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=rw
+
+- name: Extract JetBrainsMono.zip fonts
+  ansible.builtin.unarchive:
+    src: "JetBrainsMono.zip"
+    dest: "{{ path_fonts }}"

@@ -1,0 +1,6 @@
+---
+
+- name: Purge old kernels
+  shell: "purge-old-kernels -y"
+  become: yes
+  become_user: root

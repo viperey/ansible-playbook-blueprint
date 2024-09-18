@@ -1,0 +1,50 @@
+---
+# tasks file for docker-service-nextcloud
+- name: import secret variable file
+  include_vars: "secrets.yaml"
+  no_log: true
+
+- name: Create service data base folder
+  file:
+    path: "{{ base_path }}{{ item.relative_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: no
+  loop:
+    - { relative_path: "/data/nextcloud" }
+
+- template:
+    src: docker-compose.yaml.j2
+    dest: "{{ base_path }}/docker-compose.yaml"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- name: Deploy docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_path }}"
+    files:
+      - docker-compose.yaml
+    build: never
+    pull: always
+    recreate: always
+
+- name: Backup nextcloud stuff
+  ansible.builtin.cron:
+    name: "Backup {{ item.filename }}"
+    minute: "0"
+    hour: "0"
+    job: "wget --directory-prefix=nc-backups --user= --password={{ nextcloud_user_password }} --timestamping {{ item.url }} -O {{ base_path }}/data/nextcloud/data/admin/files/.Contacts-Backup/{{ item.filename }}"
+    user: "{{ destination_user }}"
+  loop:
+    - { url: "http://files.rock/remote.php/dav/calendars/admin/contact_birthdays/?export", filename: "contacts-birthdays.ics" }
+
+- name: Force sync from host to clients
+  ansible.builtin.cron:
+    name: "Force sync from host to clients"
+    minute: "0"
+    hour: "6"
+    job: "docker exec -it nextcloud php occ files:scan --all"
+    user: "{{ destination_user }}"

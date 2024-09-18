@@ -1,0 +1,14 @@
+---
+
+- name: Aptitude, add stable
+  ansible.builtin.apt_repository:
+    repo: "{{ item.releases}}"
+    state: present
+    filename: debian
+  loop:
+    - { releases: "deb http://deb.debian.org/debian/ bookworm main" }
+    - { releases: "deb-src http://deb.debian.org/debian/ bookworm main" }
+    - { releases: "deb http://deb.debian.org/debian/ bookworm-updates main" }
+    - { releases: "deb-src http://deb.debian.org/debian/ bookworm-updates main" }
+    - { releases: "deb http://security.debian.org/debian-security bookworm-security main" }
+    - { releases: "deb-src http://security.debian.org/debian-security bookworm-security main" }

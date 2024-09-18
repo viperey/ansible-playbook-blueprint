@@ -1,0 +1,57 @@
+---
+- name: import secret variable file
+  include_vars: "secrets.yaml"
+  no_log: true
+
+- name: Create service base folder
+  file:
+    path: "{{ base_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: no
+
+- name: Create service data base folder
+  file:
+    path: "{{ base_path }}{{ item.relative_path }}"
+    state: directory 
+    owner: "{{ local_destination_user }}"
+    group: "{{ local_destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: no
+  loop:
+    - { relative_path: "/data/freshrss/data/freshrss" }
+
+- template:
+    src: docker-compose.yaml.j2
+    dest: "{{ base_path }}/docker-compose.yaml"
+    owner: "{{local_destination_user}}"
+    group: "{{local_destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- copy:
+    src: config.php
+    dest: "{{ base_path }}/data/freshrss/data"
+    owner: "{{ local_destination_user }}"
+    group: "{{ local_destination_user }}"
+    mode: u=rwx,g=rw,o=rw
+
+- name: Widely apply user permissions
+  file:
+    path: "{{ base_path }}{{ item.relative_path }}"
+    owner: "{{ local_destination_user }}"
+    group: "{{ local_destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: yes
+  loop:
+    - { relative_path: "/data/freshrss/" }
+
+- name: Deploy docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_path }}"
+    files:
+      - docker-compose.yaml
+    build: never
+    pull: always
+    recreate: always

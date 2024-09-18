@@ -1,0 +1,89 @@
+
+version: "3.4"
+
+services:
+  nextcloud:
+    image: nextcloud:{{ docker_image_version.nextcloud }}
+    container_name: nextcloud
+    volumes:
+      - ./data/nextcloud:/var/www/html
+      - ./data/nextcloud/redis-session.ini:/usr/local/etc/php/conf.d/redis-session.ini:rw
+      - /etc/localtime:/etc/localtime:ro
+      - /xxx/yyy/music/:/data-external/music
+      - /xxx/yyy/library:/data-external/library
+      - /xxx/yyy/doc:/data-external/doc
+      - /xxx/yyy/dev:/data-external/dev
+      - /xxx/yyy/pictures:/data-external/pictures
+    restart: unless-stopped
+    dns:
+      - {{ pink_floyd_network_dns_address_v4 }}
+      - {{ backup_dns_ip_address_v4 }}
+      - {{ pink_floyd_network_dns_address_v6 }}
+      - {{ backup_dns_ip_address_v6 }}
+    expose:
+      - "80"
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    environment:
+      - NEXTCLOUD_TRUSTED_DOMAINS=files.rock
+      - NEXTCLOUD_ADMIN_USER=
+      - NEXTCLOUD_ADMIN_PASSWORD={{ nextcloud_user_password }}
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=
+      - PHP_UPLOAD_LIMIT=100G
+      - PHP_MEMORY_LIMIT=2G
+      - REDIS_HOST=redis
+    user: "{{ docker_destination_user_id }}:{{ docker_destination_user_id }}"
+    networks:
+      - default
+    depends_on:
+      - nextcloud-db
+    deploy:
+      resources:
+        limits:
+          memory: 2048M
+        reservations:
+          memory: 2048M
+
+  nextcloud-db:
+    image: postgres:{{ docker_image_version.postgres }}
+    container_name: nextcloud-db
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    expose:
+      - "3306"
+    environment:
+      - POSTGRES_HOST=nextcloud-db
+      - POSTGRES_PASSWORD=
+      - POSTGRES_DB=nextcloud
+      - POSTGRES_USER=
+    restart: unless-stopped
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
+
+  redis:
+    image: redis:latest
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    networks:
+      - default
+    volumes:
+      - ./data/redis:/var/lib/redis
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
+
+networks:
+  default:
+    name: services_network
+    external: true

@@ -1,0 +1,12 @@
+---
+- name: Enable cron log
+  lineinfile:
+    dest=/etc/rsyslog.conf
+    regexp='^#cron'
+    line="cron.*                         /var/log/cron.log"
+    state=present
+    backup=yes
+
+- name: Restart service rsyslog
+  ansible.builtin.service:
+    name: rsyslog

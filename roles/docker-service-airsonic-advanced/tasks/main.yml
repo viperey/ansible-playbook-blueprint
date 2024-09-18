@@ -1,0 +1,47 @@
+---
+# tasks file for docker-service-airsonic-advanced
+- name: Create service data base folder
+  file:
+    path: "{{ base_path }}{{ item.relative_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=rw
+    recurse: yes
+  loop:
+    - { relative_path: "/data/airsonic/playlists" }
+    - { relative_path: "/data/airsonic/config" }
+    - { relative_path: "/data/airsonic/var/transcode" }
+    - { relative_path: "/data/airsonic/var" }
+    - { relative_path: "/data/db/config" }
+
+- template:
+    src: docker-compose.yaml.j2
+    dest: "{{ base_path }}/docker-compose.yaml"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- copy:
+    src: custom.cnf
+    dest: "{{ base_path }}"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- name: Widely apply user permissions
+  file:
+    path: "{{ base_path }}"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: yes
+
+- name: Deploy docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_path }}"
+    files:
+      - docker-compose.yaml
+    build: never
+    pull: always
+    recreate: always

@@ -1,0 +1,10 @@
+---
+- name: Check if sdkman is installed 
+  shell: test -d {{sdkman_folder}} && echo "yes" || echo "no"
+  register: is_sdkman_installed
+  become: no
+
+- name: Install SDKMan Package Manager
+  shell: curl -s {{sdkman_script_install_url }} | bash executable=/bin/bash
+  when : is_sdkman_installed.stdout == "no"
+  become: no

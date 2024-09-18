@@ -1,0 +1,7 @@
+---
+- name: Install ssh server
+  apt:
+    name:
+      - openssh-server
+    allow_unauthenticated: true
+    state: latest

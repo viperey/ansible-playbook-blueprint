@@ -1,0 +1,23 @@
+---
+- name: Gather network interfaces facts
+  setup:
+    gather_subset: network
+
+- name: Set fact for the ethernet interface
+  set_fact:
+    primary_interface: "{{ ansible_default_ipv4['interface'] }}"
+
+- name: Upsert fixed ipv6 address
+  ansible.builtin.blockinfile:
+    path: /etc/network/interfaces
+    block: |
+      auto {{ primary_interface }}
+      iface {{ primary_interface }} inet dhcp
+      iface {{ primary_interface }} inet6 auto
+      iface {{ primary_interface }} inet6 static
+          address {{ target_host_ip_v6_address }}
+          netmask 64
+    state: present
+  when: 
+    - target_host_ip_v4_address is defined and target_host_ip_v4_address | trim != ''
+    - target_host_ip_v6_address is defined and target_host_ip_v6_address | trim != ''

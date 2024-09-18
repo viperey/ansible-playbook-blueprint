@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+
+  wireguard:
+    image: ghcr.io/linuxserver/wireguard:{{ docker_image_version.wireguard }}
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    environment:
+      - PUID={{ docker_destination_user_id }}
+      - PGID={{ docker_destination_user_id }}
+      - TZ=Europe/Amsterdam
+      - SERVERURL=
+      - SERVERPORT=
+      - PEERS=phone,laptop,work-laptop,tablet
+      - PEERDNS={{ rock_ip_address }}
+    volumes:
+      - ./data/wireguard-ls/config:/config
+      - /lib/modules:/lib/modules
+    ports:
+      - xxxxx:yyyyy/udp
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
+    dns:
+      - {{ pink_floyd_network_dns_address_v4 }}
+      - {{ backup_dns_ip_address_v4 }}
+      - {{ pink_floyd_network_dns_address_v6 }}
+      - {{ backup_dns_ip_address_v6 }}
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 128M
+
+networks:
+  default:
+    name: services_network
+    external: true
+

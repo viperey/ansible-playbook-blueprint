@@ -1,0 +1,32 @@
+---
+# tasks file for dotfiles
+
+# Copy
+- copy:
+    src: .dotfiles
+    dest: "{{ destination_user_home }}"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=rw,o=rw
+
+- name: "Link stuff for {{ item.target }} via stow"
+  shell: "stow --adopt --verbose --target ~ {{ item.target }}"
+  become: yes
+  become_user: "{{ destination_user }}"
+  args:
+    chdir: "{{ destination_user_home }}/.dotfiles"
+  loop:
+    - { target: "alacritty" }
+    - { target: "git" }
+    - { target: "i3" }
+    - { target: "nextcloud" }
+    - { target: "nvim" }
+    - { target: "oh-my-zsh" }
+    - { target: "polybar" }
+    - { target: "rofi"}
+    - { target: "terminator" }
+    - { target: "tmux" }
+    - { target: "zsh" }
+
+- include_tasks: pulse.yaml
+

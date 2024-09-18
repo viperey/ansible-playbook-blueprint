@@ -1,0 +1,10 @@
+---
+
+- name: Install tmux tpm
+  git:
+    repo: https://github.com/tmux-plugins/tpm.git 
+    dest: "{{ destination_user_home }}/.tmux/plugins/tpm"
+    force: false
+  ignore_errors: true
+  become: yes
+  become_user: "{{ destination_user  }}"

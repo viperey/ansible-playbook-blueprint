@@ -1,0 +1,14 @@
+---
+
+- name: "Create {{ path_themes }} directory"
+  ansible.builtin.file:
+    path: "{{ path_themes }}"
+    state: directory
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=rw
+
+- name: Extract c-black.zip theme
+  ansible.builtin.unarchive:
+    src: "CBlack.zip"
+    dest: "{{ path_themes }}"

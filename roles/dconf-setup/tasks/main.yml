@@ -1,0 +1,14 @@
+---
+# tasks file for setup-dconf
+
+- copy:
+    src: cinnamon-desktop.dconf
+    dest: "{{ destination_user_home }}/.config/cinnamon-desktop.dconf"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwx,g=rw,o=rw
+
+- name: Load dconf from file
+  shell: "dconf load / < {{ destination_user_home }}/.config/cinnamon-desktop.dconf"
+  become: yes
+  become_user: "{{ destination_user }}"

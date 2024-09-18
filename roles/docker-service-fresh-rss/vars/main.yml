@@ -1,0 +1,4 @@
+---
+# vars file for docker-service-fresh-rss
+base_path: "{{ services_base_path }}/fresh-rss"
+local_destination_user: www-data

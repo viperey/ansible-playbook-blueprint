@@ -1,0 +1,51 @@
+---
+- name: import secret variable file
+  include_vars: "secrets.yaml"
+  no_log: true
+
+# tasks file for docker-service-pi-hole
+- name: Create service data base folder
+  file:
+    path: "{{ base_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: no
+
+- name: Create service data folders
+  file:
+    path: "{{ base_path }}{{ item.relative_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: no
+  loop:
+    - { relative_path: "/data" }
+    - { relative_path: "/data/pi-hole" }
+    - { relative_path: "/data/pi-hole/etc-pihole" }
+    - { relative_path: "/data/pi-hole/etc-dnsmasq.d" }
+
+- template:
+    src: docker-compose.yaml.j2
+    dest: "{{ base_path }}/docker-compose.yaml"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- template:
+    src: custom.list.j2
+    dest: "{{ base_path }}/data/pi-hole/etc-pihole/custom.list"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=rw,o=rw
+
+- name: Deploy docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_path }}"
+    files:
+      - docker-compose.yaml
+    build: never
+    pull: always
+    recreate: always

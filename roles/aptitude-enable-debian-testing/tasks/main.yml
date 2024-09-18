@@ -1,0 +1,4 @@
+---
+- include_tasks: ../../aptitude-commons/add-testing.yaml
+- include_tasks: ../../aptitude-commons/remove-stable.yaml
+

@@ -1,0 +1,73 @@
+version: "3.4"
+
+services:
+  calibre-web-library-books:
+    image: linuxserver/calibre-web:{{ docker_image_version.calibre }}
+    container_name: calibre-web-library-books
+    environment:
+      - PUID={{ docker_destination_user_id }}
+      - PGID={{ docker_destination_user_id }}
+      - TZ=Europe/London
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ./data/calibre/books:/config
+    expose:
+      - "8083"
+    restart: unless-stopped
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
+
+  calibre-web-library-dev:
+    image: linuxserver/calibre-web:{{ docker_image_version.calibre }}
+    container_name: calibre-web-library-dev
+    environment:
+      - PUID={{ docker_destination_user_id }}
+      - PGID={{ docker_destination_user_id }}
+      - TZ=Europe/London
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ./data/calibre/dev:/config
+    expose:
+      - "8083"
+    restart: unless-stopped
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
+
+  calibre-web-library-comic:
+    image: linuxserver/calibre-web:{{ docker_image_version.calibre }}
+    container_name: calibre-web-library-comic
+    environment:
+      - PUID={{ docker_destination_user_id }}
+      - PGID={{ docker_destination_user_id }}
+      - TZ=Europe/London
+      - DOCKER_MODS=linuxserver/calibre-web:calibre
+    volumes:
+      - ./data/calibre/comic:/config
+    expose:
+      - "8083"
+    restart: unless-stopped
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
+
+networks:
+  default:
+    name: services_network
+    external: true

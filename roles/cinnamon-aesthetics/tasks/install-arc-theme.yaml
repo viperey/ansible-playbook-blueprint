@@ -1,0 +1,14 @@
+---
+
+- name: "Create {{ path_themes }} directory"
+  ansible.builtin.file:
+    path: "{{ path_themes }}"
+    state: directory
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=rw
+
+- name: Extract arc-darkest.zip theme
+  ansible.builtin.unarchive:
+    src: "Arc-Darkest-3.38_1.8.4.zip"
+    dest: "{{ path_themes }}"

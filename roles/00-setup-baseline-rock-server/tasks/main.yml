@@ -1,0 +1,5 @@
+---
+
+- include_tasks: ssh-keys-setup.yaml
+- include_tasks: resolv-setup.yaml
+- include_tasks: fstab-setup.yaml

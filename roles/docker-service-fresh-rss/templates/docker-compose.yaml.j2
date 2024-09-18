@@ -1,0 +1,65 @@
+version: '3.4'
+
+services:
+  freshrss-db:
+    image: postgres:{{ docker_image_version.postgres }}
+    container_name: freshrss-db
+    hostname: freshrss-db
+    restart: unless-stopped
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: 
+      POSTGRES_PASSWORD: 
+      POSTGRES_DB: freshrss
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 128M
+
+  freshrss-app:
+    image: freshrss/freshrss:{{ docker_image_version.fresh_rss }}
+    container_name: freshrss-app
+    hostname: freshrss-app
+    restart: unless-stopped
+    expose:
+      - "80"
+    depends_on:
+      - freshrss-db
+    volumes:
+      - ./data/freshrss/data:/var/www/FreshRSS/data
+      - ./data/freshrss/extensions:/var/www/FreshRSS/extensions
+      - ./data/freshrss/opml-backup:/opml-backup
+    environment:
+      CRON_MIN: '*/20'
+      TZ: Europe/Paris
+      FRESHRSS_INSTALL: |-
+        --api_enabled
+        --base_url http://rss.dock
+        --db-base freshrss
+        --db-host freshrss-db
+        --db-password 
+        --db-type pgsql
+        --db-user 
+        --default_user admin
+        --language en
+      FRESHRSS_USER: |-
+        --api_password {{ fresh_rss_user_password }}
+        --language en
+        --password {{ fresh_rss_user_password }}
+        --user admin
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
+
+networks:
+  default:
+    name: services_network
+    external: true

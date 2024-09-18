@@ -1,0 +1,47 @@
+ansible_python_interpreter: /usr/bin/python3
+destination_user: viperey
+
+#=== Paths ===
+destination_user_home: "/home/{{ destination_user }}"
+services_base_path_parent: "{{ destination_user_home }}"
+services_base_path: "{{ services_base_path_parent}}/services"
+sdkman_script_install_url: http://get.sdkman.io
+sdkman_folder: "{{ services_base_path_parent }}/.sdkman"
+path_themes: "{{ services_base_path_parent }}/.themes"
+path_fonts: "{{ destination_user_home }}/.local/share/fonts"
+rock_backup_path: "~"
+moon_docker_services_setup_backup_path: "~/backup-moon-services-data.tar.gz"
+rock_docker_services_setup_backup_path: "{{ rock_backup_path }}/rock-services-data.tar.gz "
+
+#=== Network ===
+pink_floyd_network_prefix_v4: "192.168.178"
+pink_floyd_network_prefix_v6: "fd00"
+moon_ip_suffix: "xx"
+rock_ip_suffix: "yy"
+pulse_ip_suffix: "zz"
+moon_ip_address: "{{ pink_floyd_network_prefix_v4 }}.{{ moon_ip_suffix }}"
+moon_ip_address_v6: "{{ pink_floyd_network_prefix_v6 }}::{{ moon_ip_suffix }}"
+moon_docker_services_ipv6_subnet: "{{ pink_floyd_network_prefix_v6 }}:{{ moon_ip_suffix }}::/32"
+rock_ip_address: "{{ pink_floyd_network_prefix_v4 }}.{{ rock_ip_suffix }}"
+rock_ip_address_v6: "{{ pink_floyd_network_prefix_v6 }}::{{ rock_ip_suffix }}"
+rock_docker_services_ipv6_subnet: "{{ pink_floyd_network_prefix_v6 }}:{{ rock_ip_suffix }}::/32"
+pulse_ip_address: "{{ pink_floyd_network_prefix_v4 }}.{{ pulse_ip_suffix }}"
+pulse_ip_address_v6: "{{ pink_floyd_network_prefix_v6 }}::{{ pulse_ip_suffix }}"
+#=== Network > DNS ===
+pink_floyd_network_dns_address_v4: "{{ rock_ip_address }}"
+pink_floyd_network_dns_address_v6: "{{ rock_ip_address_v6 }}"
+backup_dns_ip_address_v4: 1.1.1.1
+backup_dns_ip_address_v6: 2606:4700::1111
+
+docker_destination_user_id: "{{ ansible_env.SUDO_UID }}"
+
+docker_image_version:
+  airsonic_advance: "edge-latest"
+  calibre: "0.6.21"
+  fresh_rss: "1.23.1"
+  maria_db: "10.11.5"
+  nextcloud: "28.0.1-apache"
+  pi_hole: "2024.03.1"
+  postgres: "13.11-alpine"
+  watchtower: "latest"
+  wireguard: "latest"

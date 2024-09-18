@@ -1,0 +1,2 @@
+---
+base_path: "{{ services_base_path }}/pi-hole"

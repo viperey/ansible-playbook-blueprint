@@ -1,0 +1,4 @@
+SocksPort 192.168.178.xx:yyyy
+SocksPolicy accept 192.168.178.0/24
+RunAsDaemon 1
+DataDirectory /var/lib/tor

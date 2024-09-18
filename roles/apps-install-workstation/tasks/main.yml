@@ -1,0 +1,23 @@
+---
+- name: Install needed packages
+  apt:
+    name:
+      - nextcloud-desktop
+      - terminator
+      - firmware-iwlwifi 
+      - network-manager
+      - pipx
+      - autorandr
+      - blueman
+      - bluez
+      - clementine
+      - nemo
+      - pulseaudio
+      - thunderbird
+      - calibre
+    allow_unauthenticated: true
+    state: latest
+ 
+- include_tasks: install-sublime-merge.yaml
+- include_tasks: install-sublime-text.yaml
+- include_tasks: install-signal-desktop.yaml

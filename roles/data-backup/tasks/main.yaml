@@ -1,0 +1,24 @@
+---
+- name: Create service base folder
+  file:
+    path: "{{ base_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: no
+
+- copy:
+    src: "run.sh"
+    dest: "{{ base_path }}/run.sh"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwx,g=rwx,o=rwx
+
+- name: Setup the backup in the cronjob
+  ansible.builtin.cron:
+    name: "Run critical data backup"
+    minute: "0"
+    hour: "0"
+    job: "{{ base_path }}/run.sh"
+    user: "{{ destination_user }}"

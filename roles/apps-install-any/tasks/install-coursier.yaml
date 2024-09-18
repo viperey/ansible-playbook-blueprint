@@ -1,0 +1,10 @@
+---
+
+- name: Install coursier via curl app.image
+  shell: |
+    cd /tmp
+    curl -fL "https://github.com/coursier/launchers/raw/master/cs-x86_64-pc-linux.gz" | gzip -d > cs
+    chmod +x cs
+    mv cs {{ destination_user_home }}/.local/bin/cs
+  become: no
+

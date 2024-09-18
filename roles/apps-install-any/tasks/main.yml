@@ -1,0 +1,65 @@
+---
+- name: Install most basic applications
+  apt:
+    name:
+      - lsb-release
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg2
+      - software-properties-common
+      - fail2ban
+      - jq
+      - nfs-common
+      - git
+      - unzip
+      - zip
+      - scala
+      - default-jre
+      - keepassxc
+      - ufw
+      - screen
+      - ncdu
+      - stow
+      - zsh
+      - bat
+      - eza
+      - duf
+      - fzf
+      - nmap
+      - rsync
+      - mhddfs
+      - wget
+      - python3
+      - python3-setuptools
+      - python3-pip
+      - python3-venv
+      - python3-launchpadlib
+      - openssh-client
+      - htop
+      - dnsutils
+      - tmux
+      - i3
+      - feh
+      - i3blocks
+      - polybar
+      - rofi
+      - ripgrep
+      - iotop
+      - alacritty
+      - ansible
+      - sshfs
+      - byobu
+      - snapd
+      - luarocks
+      - bluetooth
+    allow_unauthenticated: true
+    state: latest
+
+- include_tasks: install-oh-my-zsh.yaml
+- include_tasks: install-sdk-man.yaml
+- include_tasks: install-docker.yaml
+- include_tasks: install-coursier.yaml
+- include_tasks: install-neovim.yaml
+- include_tasks: install-tmux.yaml
+- include_tasks: install-rust.yaml

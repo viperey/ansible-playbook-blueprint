@@ -1,0 +1,14 @@
+---
+- name: Install python 3.11
+  apt:
+    name:
+      - python3.11-venv
+
+- name: Create & active a python environment
+  shell: "python3 -m venv ~/.venv; source ~/.venv/bin/activate;"
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: "{{ destination_user }}"
+  vars:
+    ansible_python_interpreter: /usr/bin/python3

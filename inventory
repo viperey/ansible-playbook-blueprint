@@ -1,0 +1,14 @@
+[dropplets]
+xxxxxxxxxxxxxxxxxxxxxxxx.org
+xxxxx.yyyy
+xxxxxxxxx.yyyy
+
+[workstations]
+pulse ansible_connection=local target_host_ip_v4_address=192.168.178.xx target_host_ip_v6_address=fd00::yy
+the-wall ansible_connection=local target_host_ip_v4_address=192.168.178.yy target_host_ip_v6_address=fd00::yy
+ 
+[servers_private_services_project]
+rock target_host_ip_v4_address=192.168.178.zz target_host_ip_v6_address=fd00::zz
+ 
+[servers_nexus_library_project]
+moon target_host_ip_v4_address=192.168.178.ww target_host_ip_v6_address=fd00::ww

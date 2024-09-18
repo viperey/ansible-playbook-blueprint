@@ -1,0 +1,81 @@
+---
+- hosts: workstations
+  vars:
+    ansible_python_interpreter: "{{ destination_user_home }}/.venv/bin/python"
+  become: yes
+  become_user: root
+  roles:
+    - aptitude-enable-debian-testing
+    - apps-install-any
+    - apps-install-workstation
+    - apps-upgrade-clean
+    - network-setup-ipv6
+    - dotfiles-setup
+    - fonts-setup
+    - cinnamon-aesthetics
+    - dconf-setup
+
+- hosts: dropplets
+  become: yes
+  become_user: root
+
+  roles:
+    - aptitude-enable-debian-stable
+    - apps-install-any
+    - apps-install-server
+    - apps-upgrade-clean
+    - dotfiles-setup
+    - fonts-setup
+
+- hosts: servers_private_services_project
+  vars:
+    ansible_ssh_private_key_file: "/home/viperey/.ssh/ssh"
+    ansible_python_interpreter: "{{ destination_user_home }}/.venv/bin/python"
+  become: yes
+  become_user: root
+
+  roles:
+    - aptitude-enable-debian-stable
+    - apps-install-any
+    - apps-install-server
+    - apps-upgrade-clean
+    - 00-setup-baseline-rock-server
+    - network-setup-ipv6
+    - data-backup
+    - dotfiles-setup
+    - cronjob-setup
+    - sshd-setup
+    - docker-services-setup
+    # Alphabetical
+    - docker-service-airsonic-advanced
+    - docker-service-calibre
+    - docker-service-fresh-rss
+    - docker-service-nextcloud
+    - docker-service-watchtower
+    - docker-service-wireguard
+    # Non-alphabetical anymore
+    - docker-service-pi-hole
+    - docker-service-nginx
+    - service-telegram-ssh-tooling
+    - service-tor
+    - fonts-setup
+
+- hosts: servers_nexus_library_project
+  vars:
+    ansible_ssh_private_key_file: "/home/viperey/.ssh/ssh"
+    ansible_python_interpreter: "{{ destination_user_home }}/.venv/bin/python"
+  become: yes
+  become_user: root
+
+  roles:
+    - aptitude-enable-debian-stable
+    - apps-install-any
+    - apps-install-server
+    - apps-upgrade-clean
+    - 00-setup-baseline-moon-server
+    - network-setup-ipv6
+    - cronjob-setup
+    - sshd-setup
+    - dotfiles-setup
+    - docker-services-setup
+

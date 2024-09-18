@@ -1,0 +1,14 @@
+---
+# tasks file for cinnamon-aesthetics
+
+- name: Create ~/.themes directory
+  ansible.builtin.file:
+    path: "{{ destination_user_home }}/.themes"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=rw
+
+- include_tasks: install-arc-theme.yaml
+- include_tasks: install-c-black-theme.yaml
+- include_tasks: install-numix-icon-theme-circle.yaml

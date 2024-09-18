@@ -1,0 +1,3 @@
+---
+- include_tasks: ../../aptitude-commons/dist-upgrade.yaml
+- include_tasks: ../../aptitude-commons/purge-old-kernels.yaml

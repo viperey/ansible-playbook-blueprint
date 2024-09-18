@@ -1,0 +1,3 @@
+---
+# vars file for docker-service-nextcloud
+base_path: "{{ services_base_path }}/nextcloud"

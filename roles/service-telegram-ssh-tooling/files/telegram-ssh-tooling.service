@@ -1,0 +1,14 @@
+[Unit]
+Description=telegram-ssh-tooling
+
+[Service]
+After=network.target
+StartLimitIntervalSec=0
+Type=simple
+Restart=always
+RestartSec=10
+User=root
+ExecStart=/home/viperey/.sdkman/candidates/scala/current/bin/scala /home/viperey/services/telegram-ssh-tooling/target/scala-2.12/telegram-ssh-tooling-assembly-0.1.jar
+
+[Install]
+WantedBy=multi-user.target

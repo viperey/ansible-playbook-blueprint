@@ -1,0 +1,49 @@
+version: '3.4'
+
+# https://github.com/pi-hole/docker-pi-hole/blob/master/README.md
+services:
+  pihole:
+    container_name: pi-hole
+    image: pihole/pihole:{{ docker_image_version.pi_hole }}
+    expose:
+      - "81/tcp"
+      - "53/tcp"
+      - "53/udp"
+      - "67/udp"
+    environment:
+      TZ: 'Europe/Amsterdam'
+      WEBPASSWORD: {{ pi_hole_user_password }}
+      ServerIP: {{ rock_ip_address }}
+      FTL_CONF_LOCAL_IPV4: {{ rock_ip_address }}
+      FTL_CONF_LOCAL_IPV6: {{ rock_ip_address_v6 }}
+      PIHOLE_UID: 0
+      DNSMASQ_USER: "root"
+      DNSMASQ_LISTENING: "all"
+      PROXY_LOCATION: rock
+      VIRTUAL_HOST: dns.rock
+      VIRTUAL_PORT: 80
+      WEB_PORT: 81
+    volumes:
+      - ./data/pi-hole/etc-pihole/custom.list:/etc/pihole/custom.list
+      - ./data/pi-hole/etc-pihole:/etc/pihole
+      - ./data/pi-hole/etc-dnsmasq.d:/etc/dnsmasq.d
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    dns:
+      - {{ pink_floyd_network_dns_address_v4 }}
+      - {{ backup_dns_ip_address_v4 }}
+      - {{ pink_floyd_network_dns_address_v6 }}
+      - {{ backup_dns_ip_address_v6 }}
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 128M
+
+networks:
+  default:
+    name: services_network
+    external: true

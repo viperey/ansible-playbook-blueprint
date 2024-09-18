@@ -1,0 +1,45 @@
+---
+# Backup
+- name: Compress directory {{ services_base_path }} into {{ services_base_path }}/../services.tgz
+  community.general.archive:
+    path: "{{ services_base_path }}"
+    dest: "{{ services_base_path }}/../services.tar.gz"
+    format: gz
+    force_archive: true
+  become: yes
+  become_user: root
+  ignore_errors: yes
+  when: do_destroy_services or do_backup_services
+
+# tasks file for docker-service-destroy
+- name: Stop all containers
+  shell: docker stop $(docker ps -qa)
+  become: true
+  ignore_errors: yes
+  when: do_destroy_services
+
+- name: Remove all containers
+  shell: docker rm $(docker ps -qa)
+  become: true
+  ignore_errors: yes
+  when: do_destroy_services
+
+## Backup restore/cleanup/refresh
+- name: Remove ~/services folder
+  file:
+    path: "{{ services_base_path }}"
+    state: absent
+  become: true
+  when: do_destroy_services
+
+# Coment this task if you want an installation from scratch
+- name: Unarchive a file with extra options
+  ansible.builtin.unarchive:
+    src: "{{ services_base_path_parent }}/services.tar.gz"
+    dest: "{{ services_base_path_parent }}"
+    extra_opts:
+    - --same-owner
+    remote_src: yes
+  become: yes
+  become_user: root
+  when: do_restore_backup_services

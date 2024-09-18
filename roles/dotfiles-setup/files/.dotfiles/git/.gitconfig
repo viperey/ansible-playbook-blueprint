@@ -1,0 +1,8 @@
+[user]
+	email = xxxxxxxxxxxxxxxxxx
+	name = Viperey
+[core]
+	editor = vim
+	autocrlf = input
+[init]
+	defaultBranch = no-masters

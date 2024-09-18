@@ -1,0 +1,45 @@
+---
+
+- name: Get DEB architecture
+  shell: dpkg --print-architecture
+  register: deb_architecture
+
+- name: Print DEB architecture
+  debug:
+    msg: "deb_architecture.stdout: {{ deb_architecture.stdout }}"
+
+- name: Add an Apt signing key to a specific keyring file
+  ansible.builtin.apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    keyring: /etc/apt/keyrings/docker.gpg
+
+- name: Add source repository into sources list
+  ansible.builtin.apt_repository:
+    repo: "deb [arch={{ deb_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian   bookworm stable"
+    state: present
+    filename: docker
+
+- name: apt-update
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Install docker stack
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+    allow_unauthenticated: true
+    state: latest
+
+- name: "Add {{ destination_user }} user to docker group"
+  remote_user: "{{ destination_user }}"
+  user:
+    name: "{{ destination_user }}"
+    group: "docker"
+    append: yes
+  tags:
+    - docker

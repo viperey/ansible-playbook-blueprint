@@ -1,0 +1,53 @@
+---
+- name: Set or redefine variables for nexus project
+  set_fact:
+    docker_services_swarm_advertise_addr: "{{ moon_ip_address }}"
+    docker_services_ipv6_subnet: "{{ moon_docker_services_ipv6_subnet }}"
+    docker_services_setup_backup_folder: "{{ moon_docker_services_setup_backup_path }}"
+  when: "'servers_nexus_library_project' in group_names"
+
+- name: Set or redefine variables for private services project
+  set_fact:
+    docker_services_swarm_advertise_addr: "{{ rock_ip_address }}"
+    docker_services_ipv6_subnet: "{{ rock_docker_services_ipv6_subnet }}"
+    docker_services_setup_backup_folder: "{{ rock_docker_services_setup_backup_path }}"
+  when: "'servers_private_services_project' in group_names"
+
+- name: Prune everything in docker, deletes what's not in use anymore, do not use in combination with destroy.
+  community.docker.docker_prune:
+    containers: yes
+    images: yes
+    images_filters:
+      dangling: false
+    networks: yes
+    volumes: yes
+    builder_cache: yes
+
+- name: Create a network
+  docker_network:
+    name: services_network
+    enable_ipv6: yes
+    ipam_config:
+      - subnet: "{{ docker_services_ipv6_subnet }}"
+
+- name: Create services data base folder
+  file:
+    path: "{{ services_base_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=rw
+    recurse: yes
+
+- name: Init a new swarm with default parameters
+  docker_swarm:
+    state: present
+    advertise_addr: "{{ docker_services_swarm_advertise_addr }}"
+
+- name: Backup services tar to backup folder
+  ansible.builtin.cron:
+    name: "Backup services tar to backup folder"
+    minute: "0"
+    hour: "0"
+    job: "tar -czvf {{ docker_services_setup_backup_folder }} {{ services_base_path }}"
+    user: "{{ destination_user }}"

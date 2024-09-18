@@ -1,0 +1,22 @@
+---
+- name: import secret variable file
+  include_vars: "ssh_moon_git_key.yml"
+  no_log: true
+
+- name: copy deployment private key
+  copy:
+    content: "{{ssh_moon_git_private_key_content}}"
+    dest: "{{ services_base_path_parent }}/.ssh/id_ed25519"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: 0600
+  no_log: true
+
+- name: copy deployment public key
+  copy:
+    content: "{{ssh_moon_git_public_key_content}}"
+    dest: "{{ services_base_path_parent }}/.ssh/id_ed25519.pub"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: 0600
+  no_log: true

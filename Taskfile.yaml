@@ -1,0 +1,48 @@
+# https://taskfile.dev
+
+version: '3'
+
+env:
+  BECOME_USER: viperey
+
+tasks:
+
+  run-playbook-for-nexus-library-project:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l servers_nexus_library_project main.yml -K -u ${BECOME_USER}  --vault-password-file vault.password
+    silent: false
+
+  run-playbook-for-private-services-project:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l servers_private_services_project main.yml -K -u ${BECOME_USER}  --vault-password-file vault.password
+    silent: false
+
+  run-playbook-for-private-services-project-check:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l servers_private_services_project main.yml -K -u ${BECOME_USER}  --vault-password-file vault.password --check --diff
+    silent: false
+
+  run-playbook-on-dropplets:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l dropplets main.yml -K -u ${BECOME_USER}
+    silent: false
+
+  run-playbook-on-dropplets-check:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l dropplets main.yml -K -u ${BECOME_USER} --check --diff
+    silent: false
+
+
+  run-playbook-on-workstation-pulse:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l workstations main.yml -K -u ${BECOME_USER} --limit pulse
+    silent: false
+
+  run-playbook-on-workstation-pulse-check:
+    cmds:
+      - ANSIBLE_STDOUT_CALLBACK=yaml ansible-playbook -v -i inventory -l workstations main.yml -K -u ${BECOME_USER} --limit pulse --check --diff
+    silent: false
+
+  default:
+    cmds: 
+      - task --list-all

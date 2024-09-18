@@ -1,0 +1,37 @@
+---
+# tasks file for docker-service-wireguard
+- name: Create service data base folder
+  file:
+    path: "{{ base_path }}{{ item.relative_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: yes
+  loop:
+    - { relative_path: "/data/wireguard/config" }
+    - { relative_path: "/data/wireguard/etc/wireguard" }
+    - { relative_path: "/data/wireguard-ui/db" }
+
+- template:
+    src: docker-compose.yaml.j2
+    dest: "{{ base_path }}/docker-compose.yaml"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- name: Widely apply user permissions
+  file:
+    path: "{{ base_path }}"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: yes
+
+- name: Deploy docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_path }}"
+    files:
+      - docker-compose.yaml
+    build: never
+    pull: always

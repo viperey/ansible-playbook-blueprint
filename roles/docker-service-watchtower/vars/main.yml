@@ -1,0 +1,3 @@
+---
+# vars file for docker-service-watchtower
+base_path: "{{ services_base_path }}/watchtower"

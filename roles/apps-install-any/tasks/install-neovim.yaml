@@ -1,0 +1,19 @@
+---
+
+- name: Install nvim via curl app.image
+  shell: |
+    cd /tmp
+    curl -LO https://github.com/neovim/neovim/releases/latest/download/nvim.appimage
+    chmod u+x nvim.appimage
+    mv nvim.appimage {{ destination_user_home }}/.local/bin/nvim
+  become: no
+
+- name: Install nvchad
+  git:
+    repo: https://github.com/NvChad/starter
+    dest: "{{ destination_user_home }}/.config/nvim"
+    force: false
+  ignore_errors: true
+  become: yes
+  become_user: "{{ destination_user  }}"
+

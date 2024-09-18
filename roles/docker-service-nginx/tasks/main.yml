@@ -1,0 +1,49 @@
+# tasks file for docker-service-nginx
+---
+
+- name: Create service data base folder
+  file:
+    path: "{{ base_path }}"
+    state: directory 
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: yes
+
+- copy:
+    src: docker-compose.yaml
+    dest: "{{ base_path }}"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- copy:
+    src: Dockerfile
+    dest: "{{ base_path }}"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- copy:
+    src: nginx.conf
+    dest: "{{ base_path }}"
+    owner: "{{destination_user}}"
+    group: "{{destination_user}}"
+    mode: u=rwx,g=r,o=r
+
+- name: Widely apply user permissions
+  file:
+    path: "{{ base_path }}"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: u=rwX,g=rX,o=
+    recurse: yes
+
+- name: Deploy docker-compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ base_path }}"
+    files:
+      - docker-compose.yaml
+    build: always
+    pull: always
+    recreate: always

@@ -1,0 +1,20 @@
+---
+- name: Add paper PPA
+  ansible.builtin.apt_repository:
+    repo: "{{ item.releases}}"
+    state: present
+    filename: snwh-ppa
+  loop:
+    - { releases: "deb https://ppa.launchpadcontent.net/snwh/ppa/ubuntu groovy main" }
+    - { releases: "deb-src https://ppa.launchpadcontent.net/snwh/ppa/ubuntu groovy main" }
+
+- name: Install paper-icons
+  apt:
+    name:
+      - paper-icon-theme
+
+- name: Install Papirus icons
+  shell: "wget -qO- https://git.io/papirus-icon-theme-install | sh"
+  args:
+    executable: /bin/bash
+  become: yes

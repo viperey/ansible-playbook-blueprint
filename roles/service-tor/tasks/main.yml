@@ -1,0 +1,29 @@
+---
+# tasks file for services-tor
+- name: Install tor apt package
+  apt:
+    pkg: tor
+    state: latest
+    update_cache: yes
+    install_recommends: no
+
+- copy:
+    src: torrc
+    dest: "/etc/tor/torrc"
+    owner: "root"
+    group: "root"
+    mode: u=rw,g=r,o=r
+
+- copy:
+    src: torrc.backup
+    dest: "/etc/tor/torrc.backup"
+    owner: "root"
+    group: "root"
+    mode: u=rw,g=r,o=r
+
+- name: restart the service
+  shell: |
+    sudo systemctl restart tor@default.service
+    sudo systemctl status tor@default.service
+  args:
+    executable: /bin/bash

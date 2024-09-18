@@ -1,0 +1,3 @@
+---
+# vars file for service-telegram-ssh-tooling
+base_path: "{{ services_base_path }}/telegram-ssh-tooling"

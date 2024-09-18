@@ -1,0 +1,44 @@
+---
+
+- name: Install wget if not already installed
+  apt:
+    name: wget
+    state: present
+
+- name: Download the Signal public software signing key
+  command: wget -O- https://updates.signal.org/desktop/apt/keys.asc
+  register: key_download
+
+- name: Convert the Signal key to a GPG keyring format
+  shell: echo "{{ key_download.stdout }}" | gpg --dearmor > signal-desktop-keyring.gpg
+  args:
+    chdir: /tmp
+  register: keyring_conversion
+
+- name: Copy the GPG keyring to the system's keyring directory
+  copy:
+    src: /tmp/signal-desktop-keyring.gpg
+    dest: /usr/share/keyrings/signal-desktop-keyring.gpg
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Add Signal repository to sources list
+  copy:
+    content: 'deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main'
+    dest: /etc/apt/sources.list.d/signal-xenial.list
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Update the package list
+  apt:
+    update_cache: yes
+
+- name: Install signal desktop
+  apt:
+    name:
+      - signal-desktop
+    allow_unauthenticated: true
+    state: latest
+

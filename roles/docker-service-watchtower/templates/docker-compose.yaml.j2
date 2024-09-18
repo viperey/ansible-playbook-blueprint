@@ -1,0 +1,22 @@
+version: '3.4'
+services:
+  kanboard:
+    image: containrrr/watchtower:{{ docker_image_version.watchtower }}
+    command: --monitor-only
+    container_name: watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+    networks:
+      - default
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 128M
+
+networks:
+  default:
+    name: services_network
+    external: true

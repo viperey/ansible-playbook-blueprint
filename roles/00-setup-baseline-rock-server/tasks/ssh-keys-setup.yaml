@@ -1,0 +1,22 @@
+---
+- name: import secret variable file
+  include_vars: "ssh_rock_git_key.yml"
+  no_log: true
+
+- name: copy deployment private key
+  copy:
+    content: "{{ssh_rock_git_private_key_content}}"
+    dest: "{{ services_base_path_parent }}/.ssh/ssh"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: 0600
+  no_log: true
+
+- name: copy deployment public key
+  copy:
+    content: "{{ssh_rock_git_public_key_content}}"
+    dest: "{{ services_base_path_parent }}/.ssh/ssh.pub"
+    owner: "{{ destination_user }}"
+    group: "{{ destination_user }}"
+    mode: 0600
+  no_log: true

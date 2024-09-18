@@ -1,0 +1,3 @@
+---
+# vars file for docker-service-airsonic-advanced
+base_path: "{{ services_base_path }}/airsonic-advanced"
